@@ -5,6 +5,7 @@ app.use(express.static('public'))
 const mongoose=require('mongoose')
 const Blog=require('./models/blog')
 app.use(express.urlencoded({extended:true}))
+const blogRoutes=require('./routes/blogRoutes')
 const dbURL=('mongodb+srv://besmaharzli:test1234@cluster0.olet8ci.mongodb.net/?retryWrites=true&w=majority')
 mongoose.connect(dbURL)
 .then(result=>{
@@ -55,60 +56,8 @@ app.get('/',(req,res)=>{
 app.get('/about',(req,res)=>{
     res.render('about',{title:'about'})
 })
-app.get('/blogs/create',(req,res)=>{
-    res.render('create',{title:'new blog'})
-})
-app.get('/blogs',(req,res)=>{
-    Blog.find()
-    .then(result=>{
-        res.render('index',{title:'home',blogs:result})
-    })
-    .catch(err=>{
-        console.log(err)
-    });
-   
-    
- });
- app.get('/blogs/:id',(req,res)=>{
-    const id=req.params.id
-    Blog.findById(id)
-    .then((result)=>{
-        res.render('details',{title:'details',blog:result})
-
-    })
-    .catch((err)=>{
-        console.log(err)
-        
-    });
- });
- app.delete('/blogs/:id',(req,res)=>{
-    const id=req.params.id
-    Blog.findByIdAndDelete(id)
-    .then((result)=>{
-        res.json({redirect:'/blogs'})
-
-    })
-    .catch((err)=>{
-        console.log(err)
-        
-    })
- })
- app.post('/blogs',(req,res)=>{
-   
-    const blog=new Blog(req.body)
-    blog.save()
-    .then((result)=>{
-      res.redirect('/blogs')
-    })
-    .catch((err)=>{
-        console.log(err)
-        
-    })
- });
- 
-
-
-
+// blogRoutes
+app.use('/blogs',blogRoutes)
 
 app.use((req,res)=>{
     res.render('404',{title:'404'})
